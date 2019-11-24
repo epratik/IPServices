@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>IPServiceAggregator</name>
+    </assembly>
+    <members>
+        <member name="P:IPServiceAggregator.DTO.ServiceInput.IpAddress">
+            <summary>
+            valid ip address
+            </summary>
+        </member>
+        <member name="P:IPServiceAggregator.DTO.ServiceInput.Services">
+            <summary>
+            comma separated services ex - geoip,rdap. If kept blank default list will be considered.
+            </summary>
+        </member>
+        <member name="M:IPServiceAggregator.IPController.GetAsync(IPServiceAggregator.DTO.ServiceInput)">
+            <summary>
+            Calls various services for the IP given. Supported services are - geoip and rdap
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
