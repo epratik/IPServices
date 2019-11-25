@@ -13,12 +13,12 @@ namespace IPServiceAggregator.Core
 {
     public class PingService : IIPBasedService
     {
-        private IConfiguration config;
+        //private IConfiguration config;
         private ILogger<PingService> logger;
         private const int noOfPackets = 2;
-        public PingService(IConfiguration config, ILogger<PingService> logger)
+        public PingService(ILogger<PingService> logger)
         {
-            this.config = config;
+            //this.config = config;
             this.logger = logger;
 
         }

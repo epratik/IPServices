@@ -26,7 +26,7 @@ namespace IPServiceAggregator.Core
             else if (serviceName.ToLower() == "rdap")
                 return new RDAP(config, httpContextAccessor.HttpContext.RequestServices.GetService<ILogger<RDAP>>());
             else if (serviceName.ToLower() == "ping")
-                return new PingService(config, httpContextAccessor.HttpContext.RequestServices.GetService<ILogger<PingService>>());
+                return new PingService(httpContextAccessor.HttpContext.RequestServices.GetService<ILogger<PingService>>());
             else
                 return null;
         }
