@@ -19,9 +19,10 @@ Sample Get Request - https://localhost:44306/api/IP/104.18.130.189/services?Serv
 Sample request for default services - https://localhost:44306/api/IP/104.18.130.189/services
 
 Future enhancements -  
-1.Convert Service output json to a internal DTO. This will provide better unit testing.
-2.Removing the Logging dependency.
-3.Better exception handling. Right now there is only a central filter and per service exception handler for partial results.  
+1.Convert Service output json to a internal DTO. This will provide better unit testing.  
+2.Removing the Logging dependency.  
+3.Better exception handling. Right now there is only a central filter and per service exception handler for partial results.    
+4.Add IP or domain support in the input. This version handles only IP input.  
 
 
 
