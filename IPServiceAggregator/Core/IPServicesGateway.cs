@@ -24,6 +24,8 @@ namespace IPServiceAggregator.Core
         {
             string[] servArray;
             List<Task<Result>> lstTasks = new List<Task<Result>>();
+            Result[] results = null;
+
             if (services == null)
                 servArray = defaultServices.Split(',');
             else
@@ -36,7 +38,10 @@ namespace IPServiceAggregator.Core
                 lstTasks.Add(task);
             }
 
-            var results = await Task.WhenAll(lstTasks);
+            Task<Result[]> allTasks = Task.WhenAll(lstTasks);
+
+            results = await allTasks;
+
             return results;
         }
     }

@@ -16,7 +16,7 @@
         </member>
         <member name="M:IPServiceAggregator.IPController.GetAsync(IPServiceAggregator.DTO.ServiceInput)">
             <summary>
-            Calls various services for the IP given. Supported services are - geoip and rdap
+            Calls various services for the IP given. Supported services are - geoip, rdap and ping
             </summary>
             <returns></returns>
         </member>

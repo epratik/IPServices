@@ -38,6 +38,7 @@ namespace IPServiceAggregator
             services.AddSingleton<IValidator<ServiceInput>, ServiceInputValidator>();
             services.AddScoped<IIPServicesGateway, IPServicesGateway>();
             services.AddScoped<IIPServicesFactory, IPServicesFactory>();
+            services.AddHttpContextAccessor();
             services.AddMemoryCache();
 
             services.AddMvc(options => options.EnableEndpointRouting = false)
