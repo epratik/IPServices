@@ -20,6 +20,8 @@ using IPServiceAggregator.Core;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
 using System.IO;
+using Confluent.Kafka;
+using StackExchange.Redis;
 
 namespace IPServiceAggregator
 {
@@ -37,7 +39,10 @@ namespace IPServiceAggregator
         {
             services.AddSingleton<IValidator<ServiceInput>, ServiceInputValidator>();
             services.AddScoped<IIPServicesGateway, IPServicesGateway>();
-            services.AddScoped<IIPServicesFactory, IPServicesFactory>();
+            
+            services.AddSingleton(typeof(IConnectionMultiplexer), x => ConnectionMultiplexer.Connect(Configuration["RedisConn"]));
+            services.AddSingleton(typeof(IProducer<Null, string>), x => new ProducerBuilder<Null, String>(
+                 new ProducerConfig() { BootstrapServers = Configuration["KafkaConn"] }).Build());
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
 

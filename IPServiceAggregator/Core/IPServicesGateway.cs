@@ -1,6 +1,9 @@
-﻿using IPServiceAggregator.Interfaces;
+﻿using Confluent.Kafka;
+using IPServiceAggregator.Interfaces;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,38 +14,62 @@ namespace IPServiceAggregator.Core
     public class IPServicesGateway : IIPServicesGateway
     {
         IConfiguration config;
-        IIPServicesFactory serviceFactory;
+        IProducer<Null, string> producer;
         string defaultServices;
-        public IPServicesGateway(IConfiguration config, IIPServicesFactory serviceFactory)
+        IConnectionMultiplexer multiplexer;
+     
+        int retryCount;
+
+        public IPServicesGateway(IConfiguration config, IProducer<Null,string> producer, IConnectionMultiplexer multiplexer)
         {
+            //Use Ioptions
             this.config = config;
-            this.serviceFactory = serviceFactory;
             defaultServices = config["defaultServices"];
+            retryCount = int.Parse(config["RetryCount"]);
+            this.producer = producer;
+            this.multiplexer = multiplexer;
+
         }
 
-        public async Task<Result[]> AggregateResults(string services, string ip)
+        public async Task<HashEntry[]> AggregateResults(string services, string ip)
         {
-            string[] servArray;
-            List<Task<Result>> lstTasks = new List<Task<Result>>();
-            Result[] results = null;
+            string[] inpSerArray;
+            List<Task<DeliveryResult<Null, string>>> lstTasks = new List<Task<DeliveryResult<Null, string>>>();
 
             if (services == null)
-                servArray = defaultServices.Split(',');
+                inpSerArray = defaultServices.Split(',');
             else
-                servArray = services.Split(',');
+                inpSerArray = services.Split(',');
 
-            foreach (string service in servArray)
+            var db = multiplexer.GetDatabase();
+            //db.HashDelete(ip, "rdap"); db.HashDelete(ip, "ping"); db.HashDelete(ip, "geoip");
+            var servicesInCache = db.HashKeys(ip);//empty if key does not exist.
+            var servicesToCall = inpSerArray.Except(servicesInCache.Select(x => x.ToString()));
+
+            foreach (string service in servicesToCall)
             {
-                var instance = serviceFactory.GetInstance(service);
-                Task<Result> task = instance.GetResultAsync(ip);
+                Task<DeliveryResult<Null, string>> task = producer.ProduceAsync(service, new Message<Null, string>() { Key = null, Value = ip });
                 lstTasks.Add(task);
             }
 
-            Task<Result[]> allTasks = Task.WhenAll(lstTasks);
+            await Task.WhenAll(lstTasks);
 
-            results = await allTasks;
+            var allEntries = await GetRemainingEntries(servicesInCache.Count(), servicesToCall.Count(), ip);
+            return allEntries.Where(x => inpSerArray.Any(y => y == x.Name)).ToArray();
+        }
 
-            return results;
+        private async Task<HashEntry[]> GetRemainingEntries(int noOfServicesInCache, int noOfServicesToCall, string ip)
+        {
+            var db = multiplexer.GetDatabase();
+            while (retryCount != 0 && noOfServicesToCall > 0)
+            {
+                await Task.Delay(1000);
+                if (db.HashLength(ip) == noOfServicesInCache + noOfServicesToCall)
+                    break;
+                else
+                    retryCount--;
+            }
+           return db.HashGetAll(ip);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using IPServiceAggregator.Core;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace IPServiceAggregator.Interfaces
 {
     public interface IIPServicesGateway
     {
-        Task<Result[]> AggregateResults(string services, string ip);
+        Task<HashEntry[]> AggregateResults(string services, string ip);
     }
 }

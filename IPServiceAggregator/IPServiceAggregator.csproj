@@ -10,6 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Core\GeoIP.cs" />
+    <Compile Remove="Core\IPServicesFactory.cs" />
+    <Compile Remove="Core\PingDetails.cs" />
+    <Compile Remove="Core\PingService.cs" />
+    <Compile Remove="Core\RDAP.cs" />
+    <Compile Remove="Core\Result.cs" />
+    <Compile Remove="Core\Status.cs" />
+    <Compile Remove="Interfaces\IIPBasedService.cs" />
+    <Compile Remove="Interfaces\IIPServicesFactory.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="1.2.2" />
     <PackageReference Include="FluentValidation" Version="8.5.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.5.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
@@ -17,6 +30,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.1" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
   </ItemGroup>
 
