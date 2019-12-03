@@ -1,11 +1,11 @@
 # IPServices
 aggregate results from multiple ip services  
 Working -  
-1.Input services are sent on different kafka topics based on name and message value as IP address.  
+1.Input services are sent on different kafka topics based on name. The message value is IP address.  
 2.There are separate worker service applications for each service provided.  
 3.These workers are consumers to the specific kafka topics. When a message is available, it is processed and written to redis hash set with IP address as the key.  
 4.The web api polls the redis cache for output of the selected services and returns the results.  
-5.Any subsequent requests for same service and same IP are server from the cache.  
+5.Any subsequent requests for same service and same IP are served from the cache.  
 6.If 3 services are requested and 2 are present in cache. API would only send 1 request to kafka.  
 7.All the worker API's are multithreaded and can by default work on 3 messages from kafka.  
 
