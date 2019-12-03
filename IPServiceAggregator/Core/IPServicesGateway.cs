@@ -31,6 +31,12 @@ namespace IPServiceAggregator.Core
 
         }
 
+        /// <summary>
+        /// Service the request from redis cache if available else send a message on respective kafka topic.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="ip"></param>
+        /// <returns></returns>
         public async Task<HashEntry[]> AggregateResults(string services, string ip)
         {
             string[] inpSerArray;
@@ -42,8 +48,10 @@ namespace IPServiceAggregator.Core
                 inpSerArray = services.Split(',');
 
             var db = multiplexer.GetDatabase();
+
+            //returns empty if key does not exist.
+            var servicesInCache = db.HashKeys(ip);
             
-            var servicesInCache = db.HashKeys(ip);//empty if key does not exist.
             var servicesToCall = inpSerArray.Except(servicesInCache.Select(x => x.ToString()));
 
             foreach (string service in servicesToCall)
@@ -58,6 +66,16 @@ namespace IPServiceAggregator.Core
             return allEntries.Where(x => inpSerArray.Any(y => y == x.Name)).ToArray();
         }
 
+        /// <summary>
+        /// Once the messages are sent on kafka. The kafka consumers will consume the message, process it and update redis cache with the results.
+        /// This function keeps checking for the output of the n services requested. We keep a delay of 1 second between checks.
+        /// Retries only a configured number of times and returns the available result.
+        /// It exits if retry count is over or if total items in redis is equal to services in cache + services to call.
+        /// </summary>
+        /// <param name="noOfServicesInCache"></param>
+        /// <param name="noOfServicesToCall"></param>
+        /// <param name="ip"></param>
+        /// <returns></returns>
         private async Task<HashEntry[]> GetRemainingEntries(int noOfServicesInCache, int noOfServicesToCall, string ip)
         {
             var db = multiplexer.GetDatabase();

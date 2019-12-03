@@ -33,6 +33,13 @@ namespace PingWorkerService
             this.consumer = consumer;
             semaphoreSlim = new SemaphoreSlim(int.Parse(configuration["MaxThreads"]));
         }
+        /// <summary>
+        /// Subscribes to ping topic in kafka queue and loops infinitely checking for new messages.
+        /// It will process only N messages at a time.
+        /// Semaphore slim is used for throttling the number of threads.
+        /// </summary>
+        /// <param name="stoppingToken"></param>
+        /// <returns></returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
