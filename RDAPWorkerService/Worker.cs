@@ -61,7 +61,7 @@ namespace RDAPWorkerService
                 HttpClient client = new HttpClient();
                 var response = await client.GetAsync(string.Format(path, ip));
                 var json = response.Content.ReadAsStringAsync().Result;               
-                db.HashSet(ip, new HashEntry[] { new HashEntry("rdap", json) });
+                db.HashSet(ip, new HashEntry[] { new HashEntry("rdap", "hello world") });
             }
             catch (Exception ex)
             {

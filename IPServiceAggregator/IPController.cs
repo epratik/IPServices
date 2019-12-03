@@ -26,7 +26,7 @@ namespace IPServiceAggregator
         /// </summary>
         /// <returns></returns>
         [Route("{IpAddress}/services")]
-        [RateLimitFilter(Seconds =10)]
+        [RateLimitFilter(Seconds =1)]
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromRoute,FromQuery]ServiceInput inpParameters)
         {
