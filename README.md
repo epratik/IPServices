@@ -2,7 +2,7 @@
 aggregate results from multiple ip services  
 Working -  
 1.Input services are sent on different kafka topics based on name. The message value is IP address.  
-2.There are separate worker service applications for each service provided.  
+2.There are separate worker service applications for each service (rdap, ping, geoip). 
 3.These workers are consumers to the specific kafka topics. When a message is available, it is processed and written to redis hash set with IP address as the key.  
 4.The web api polls the redis cache for output of the selected services and returns the results.  
 5.Any subsequent requests for same service and same IP are served from the cache.  
