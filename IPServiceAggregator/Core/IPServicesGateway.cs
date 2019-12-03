@@ -42,7 +42,7 @@ namespace IPServiceAggregator.Core
                 inpSerArray = services.Split(',');
 
             var db = multiplexer.GetDatabase();
-            //db.HashDelete(ip, "rdap"); db.HashDelete(ip, "ping"); db.HashDelete(ip, "geoip");
+            
             var servicesInCache = db.HashKeys(ip);//empty if key does not exist.
             var servicesToCall = inpSerArray.Except(servicesInCache.Select(x => x.ToString()));
 
